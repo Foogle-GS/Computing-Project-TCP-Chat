@@ -1,18 +1,26 @@
 from queue import Queue
 import socket
 import threading
-
-host = "127.0.0.1"
-port = 49152 
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creates a server with an ipv4 address and with the TCP protocol
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # allows us to use this port while its still waiting for late packets to arrive
-server.bind((host, port)) # binds the host and port to our server
-server.listen() # listens for messages or clients wanting to connect 
-
+import tkinter
+from tkinter import simpledialog
 
 clients = []
 userNames = []
+
+def getServerInfo():
+    servMsg = tkinter.Tk() # creates a tkinter widget
+    servMsg.withdraw() # hides the window
+    host = simpledialog.askstring("Ip Address", "Set your servers IP address", parent=servMsg)
+    port = simpledialog.askinteger("Port", "Set your servers Port", parent=servMsg)
+    startServer(host, port)
+
+def startServer(host, port):
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creates a server with an ipv4 address and with the TCP protocol
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # allows us to use this port while its still waiting for late packets to arrive
+    server.bind((host, port)) # binds the host and port to our server
+    server.listen() # listens for messages or clients wanting to connect 
+    recevice(server) # receive messages 
+    
 
 def broadcastMessage(message):
     for client in clients: # foreach connected client send the message provided
@@ -34,7 +42,7 @@ def HandleClient(client):
             
 
 
-def recevice():
+def recevice(server):
     while True:
         client, address = server.accept() # the client and address the client conected with is stored in variables, allow the client to connect
         print("connected with {}".format(str(address)))
@@ -52,9 +60,8 @@ def recevice():
         thread = threading.Thread(target=HandleClient, args=(client,)) # start a thread with the code from the handle client function
         thread.start() # start the thread
         
-
+getServerInfo()
     
-recevice() # receive messages 
 
 
        
