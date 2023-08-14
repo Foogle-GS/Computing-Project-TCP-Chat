@@ -7,6 +7,10 @@ from tkinter import simpledialog
 clients = []
 userNames = []
 
+
+def test():
+    print("1")
+
 def getServerInfo():
     servMsg = tkinter.Tk() # creates a tkinter widget
     servMsg.withdraw() # hides the window
@@ -56,11 +60,11 @@ def recevice(server):
         print("Username is {}".format(user))
         broadcastMessage(f"{user} has joined\n".encode("utf-8"))
         client.send("Connected\n".encode("utf-8"))
-        
         thread = threading.Thread(target=HandleClient, args=(client,)) # start a thread with the code from the handle client function
         thread.start() # start the thread
         
 getServerInfo()
+
     
 
 

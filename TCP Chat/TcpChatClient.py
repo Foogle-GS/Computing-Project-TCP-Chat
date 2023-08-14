@@ -30,6 +30,7 @@ class Client: # establishes a class or object, an sort of blueprint so that we c
 
 
         #by declaring variables with self.[the variable's name] it means we are making a variable inside this class that can be accesed when we make an object of this class like this, object1 = class(), variable = object1.var1 
+        
 
     def UILoop(self):
         # object.pack() jusyt places the created ui object on the screen and takes arguments determining location and padding etc. 
@@ -51,10 +52,14 @@ class Client: # establishes a class or object, an sort of blueprint so that we c
         self.msgLabel.pack()
 
         self.txtInputArea = tkinter.Text(self.wind, height=3) # creates a text box for inputs
+        self.txtInputArea.bind("<Return>", self.write)
         self.txtInputArea.pack() 
 
-        self.sndButton = tkinter.Button(self.wind, text="Send", command=self.write) # creates a button for sending the messages 
-        self.sndButton.pack()
+        self.chatLabel = tkinter.Label(self.wind, text=" ", bg="lightgray") # creates a label
+        self.chatLabel.pack()
+
+        #  self.sndButton = tkinter.Button(self.wind, text="Send", command=self.write) # creates a button for sending the messages 
+        # self.sndButton.pack()
 
         self.ui_done = True # lets the program know the ui has finished setting up
 
@@ -90,10 +95,11 @@ class Client: # establishes a class or object, an sort of blueprint so that we c
                 self.sock.close()
                 break
 
-    def write(self):
+    def write(self, event=None):
         message = f"{self.userName}: {self.txtInputArea.get('1.0', 'end')}"
         self.sock.send(message.encode("utf-8"))
         self.txtInputArea.delete("1.0", "end")
+        return 'break'
 
     def stop(self):
         self.running = False
@@ -106,9 +112,11 @@ def startFunc():
         userMsg.withdraw() # hides the window
 
         userName = simpledialog.askstring("Username:", "Choose a username", parent=userMsg)
-        PORT = simpledialog.askinteger("Port:", "Choose an open port", parent=userMsg)
-        HOST = simpledialog.askstring("Host ip address", "Choose the host's public ip address", parent=userMsg)
+        PORT = simpledialog.askinteger("Port:", "Choose an open port (55555)", parent=userMsg)
+        HOST = simpledialog.askstring("Host ip address", "Choose the host's public ip address (127.0.0.1)", parent=userMsg)
         client = Client(HOST, PORT, userName)
+
+
 
 startFunc()
 
